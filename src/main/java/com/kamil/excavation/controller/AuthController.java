@@ -1,5 +1,7 @@
 package com.kamil.excavation.controller;
 
+import com.kamil.excavation.dto.AuthenticationResponse;
+import com.kamil.excavation.dto.LoginRequest;
 import com.kamil.excavation.dto.RegisterRequest;
 import com.kamil.excavation.service.AuthService;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,13 @@ public class AuthController {
         return new ResponseEntity("Create Account Successfully",HttpStatus.OK);
 
     }
+
+    @PostMapping("/login")
+    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
+    }
+
+
 
     @GetMapping("accountVerification/{token}")
     public ResponseEntity<String> verifyAccount(@PathVariable String token) {

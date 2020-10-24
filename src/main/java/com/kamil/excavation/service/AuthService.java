@@ -1,6 +1,8 @@
 package com.kamil.excavation.service;
 
 
+import com.kamil.excavation.dto.AuthenticationResponse;
+import com.kamil.excavation.dto.LoginRequest;
 import com.kamil.excavation.dto.RegisterRequest;
 import com.kamil.excavation.exception.SpringRedditException;
 import com.kamil.excavation.model.NotificationEmail;
@@ -8,8 +10,13 @@ import com.kamil.excavation.model.User;
 import com.kamil.excavation.model.VerificationToken;
 import com.kamil.excavation.repository.UserRepository;
 import com.kamil.excavation.repository.VerificationTokenRepository;
+import com.kamil.excavation.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +38,8 @@ public class AuthService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailContentBuilder mailContentBuilder;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public void signup(RegisterRequest registerRequest) {
@@ -76,5 +85,12 @@ public class AuthService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User Not Found with id - " + username));
         user.setEnabled(true);
         userRepository.save(user);
+    }
+
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String authenticationToken = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
     }
 }
