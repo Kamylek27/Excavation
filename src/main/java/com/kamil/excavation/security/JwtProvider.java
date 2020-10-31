@@ -1,7 +1,7 @@
 package com.kamil.excavation.security;
 
 
-import com.kamil.excavation.exception.SpringRedditException;
+import com.kamil.excavation.exception.SpringExcavationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class JwtProvider {
             InputStream resourceAsStream = getClass().getResourceAsStream("/springblog.jks");
             keyStore.load(resourceAsStream, "kamilek".toCharArray());
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
-            throw new SpringRedditException("Exception occurred while loading keystore");
+            throw new SpringExcavationException("Exception occurred while loading keystore");
         }
 
     }
@@ -44,7 +44,7 @@ public class JwtProvider {
         try {
             return (PrivateKey) keyStore.getKey("springblog", "kamilek".toCharArray());
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
-            throw new SpringRedditException("Exception occured while retrieving public key from keystore");
+            throw new SpringExcavationException("Exception occured while retrieving public key from keystore");
         }
     }
 
@@ -57,7 +57,7 @@ public class JwtProvider {
         try {
             return keyStore.getCertificate("springblog").getPublicKey();
         } catch (KeyStoreException e) {
-            throw new SpringRedditException("Exception occured while retrieving public key from keystore");
+            throw new SpringExcavationException("Exception occured while retrieving public key from keystore");
         }
     }
 

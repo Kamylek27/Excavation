@@ -1,6 +1,6 @@
 package com.kamil.excavation.service;
 
-import com.kamil.excavation.exception.SpringRedditException;
+import com.kamil.excavation.exception.SpringExcavationException;
 import com.kamil.excavation.model.NotificationEmail;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ class MailService {
             mailSender.send(messagePreparator);
             log.info("Activation email sent!!");
         } catch (MailException e) {
-            throw new SpringRedditException("Exception occurred when sending mail to " + notificationEmail.getRecipient());
+            throw new SpringExcavationException("Exception occurred when sending mail to " + notificationEmail.getRecipient());
         }
     }
 

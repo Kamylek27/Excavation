@@ -4,7 +4,7 @@ package com.kamil.excavation.service;
 import com.kamil.excavation.dto.AuthenticationResponse;
 import com.kamil.excavation.dto.LoginRequest;
 import com.kamil.excavation.dto.RegisterRequest;
-import com.kamil.excavation.exception.SpringRedditException;
+import com.kamil.excavation.exception.SpringExcavationException;
 import com.kamil.excavation.model.NotificationEmail;
 import com.kamil.excavation.model.User;
 import com.kamil.excavation.model.VerificationToken;
@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.kamil.excavation.util.Constants.ACTIVATION_EMAIL;
 import static java.time.Instant.now;
 
 @Service
@@ -77,14 +76,14 @@ public class AuthService {
 
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationTokenOptional = verificationTokenRepository.findByToken(token);
-        verificationTokenOptional.orElseThrow(() -> new SpringRedditException("Invalid Token"));
+        verificationTokenOptional.orElseThrow(() -> new SpringExcavationException("Invalid Token"));
         fetchUserAndEnable(verificationTokenOptional.get());
     }
 
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User Not Found with id - " + username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringExcavationException("User Not Found with id - " + username));
         user.setEnabled(true);
         userRepository.save(user);
     }

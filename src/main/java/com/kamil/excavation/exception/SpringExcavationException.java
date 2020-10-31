@@ -2,9 +2,9 @@ package com.kamil.excavation.exception;
 
 import org.hibernate.engine.internal.ImmutableEntityEntry;
 
-public class SpringRedditException extends RuntimeException {
+public class SpringExcavationException extends RuntimeException {
 
-    public SpringRedditException(String message) {
+    public SpringExcavationException(String message) {
 
         super(message);
     }
