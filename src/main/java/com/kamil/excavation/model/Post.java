@@ -27,7 +27,7 @@ public class Post {
     @Nullable
     private String url;
     @Nullable
-    @Lob
+    @Lob // Large OBject
     private String description;
     private Integer voteCount;
     @ManyToOne(fetch = LAZY)

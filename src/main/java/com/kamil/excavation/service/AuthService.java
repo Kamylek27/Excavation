@@ -3,11 +3,13 @@ package com.kamil.excavation.service;
 
 import com.kamil.excavation.dto.AuthenticationResponse;
 import com.kamil.excavation.dto.LoginRequest;
+import com.kamil.excavation.dto.RefreshTokenRequest;
 import com.kamil.excavation.dto.RegisterRequest;
 import com.kamil.excavation.exception.SpringExcavationException;
 import com.kamil.excavation.model.NotificationEmail;
 import com.kamil.excavation.model.User;
 import com.kamil.excavation.model.VerificationToken;
+import com.kamil.excavation.repository.RefreshTokenRepository;
 import com.kamil.excavation.repository.UserRepository;
 import com.kamil.excavation.repository.VerificationTokenRepository;
 import com.kamil.excavation.security.JwtProvider;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,6 +43,9 @@ public class AuthService {
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
+
+
 
     @Transactional
     public void signup(RegisterRequest registerRequest) {
@@ -55,7 +61,7 @@ public class AuthService {
 
         String token = generateVerificationToken(user);
         mailService.sendMail(new NotificationEmail("Please Activate your Account",
-                user.getEmail(), "Thank you for signing up to Spring Reddit, " +
+                user.getEmail(), "Thank you for signing up to Subexcavation, " +
                 "please click on the below url to activate your account : " +
                 "http://localhost:8080/api/auth/accountVerification/" + token));
     }
@@ -75,7 +81,7 @@ public class AuthService {
     }
 
     public void verifyAccount(String token) {
-        Optional<VerificationToken> verificationTokenOptional = verificationTokenRepository.findByToken(token);
+        Optional<VerificationToken>verificationTokenOptional = verificationTokenRepository.findByToken(token);
         verificationTokenOptional.orElseThrow(() -> new SpringExcavationException("Invalid Token"));
         fetchUserAndEnable(verificationTokenOptional.get());
     }
@@ -83,7 +89,7 @@ public class AuthService {
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringExcavationException("User Not Found with id - " + username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringExcavationException("User Not Found with name - " + username));
         user.setEnabled(true);
         userRepository.save(user);
     }
@@ -95,7 +101,12 @@ public class AuthService {
                 loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String token = jwtProvider.generateToken(authenticate);
-        return new AuthenticationResponse(token, loginRequest.getUsername());
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(loginRequest.getUsername())
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -104,5 +115,16 @@ public class AuthService {
                 getContext().getAuthentication().getPrincipal();
         return userRepository.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getUsername()));
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) throws Throwable {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenRequest.getRefreshToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(refreshTokenRequest.getUsername())
+                .build();
     }
 }
