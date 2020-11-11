@@ -23,8 +23,6 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @AllArgsConstructor
-@Slf4j
-@Transactional
 public class CommentService {
 
 
@@ -41,17 +39,16 @@ public class CommentService {
 
     public void createComment(CommentsDto commentsDto) {
         Post post = postRepository.findById(commentsDto.getPostId())
-                .orElseThrow(()-> new PostNotFoundException(commentsDto.getPostId().toString()));
-
-        Comment comment = commentMapper.map(commentsDto,post,authService.getCurrentUser());
+                .orElseThrow(() -> new PostNotFoundException(commentsDto.getPostId().toString()));
+        Comment comment = commentMapper.map(commentsDto, post, authService.getCurrentUser());
         commentRepository.save(comment);
 
-        String message = mailContentBuilder.build(post.getUser().getUsername() + " posted a comment on your post." + POST_URL);
+        String message = mailContentBuilder.build(authService.getCurrentUser() + " posted a comment on your post." + POST_URL);
         sendCommentNotification(message, post.getUser());
 
     }
 
-    public List<CommentsDto> getCommentByPost(Long postId) {
+    public List<CommentsDto> getAllCommentByPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId.toString()));
         return commentRepository.findByPost(post)
@@ -60,7 +57,7 @@ public class CommentService {
                 .collect(toList());
     }
 
-    public List<CommentsDto> getCommentsByUser(String userName) {
+    public List<CommentsDto> getAllCommentsByUser(String userName) {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new UsernameNotFoundException(userName));
         return commentRepository.findAllByUser(user)

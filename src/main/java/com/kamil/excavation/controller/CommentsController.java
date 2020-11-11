@@ -26,13 +26,13 @@ public class CommentsController {
     }
 
     @GetMapping("by-postId/{postId}")
-    public ResponseEntity<List<CommentsDto>> getAllCommentsForPost(@RequestParam("postId") Long postId) {
+    public ResponseEntity<List<CommentsDto>> getAllCommentsForPost(@PathVariable Long postId) {
         return status(OK)
-                .body(commentService.getCommentByPost(postId));
+                .body(commentService.getAllCommentByPost(postId));
     }
 
     @GetMapping("/by-user/{userName}")
-    public ResponseEntity<List<CommentsDto>> getAllCommentsByUser(@RequestParam("userName") String userName) {
-        return status(OK).body(commentService.getCommentsByUser(userName));
+    public ResponseEntity<List<CommentsDto>> getAllCommentsByUser(@PathVariable String userName) {
+        return status(OK).body(commentService.getAllCommentsByUser(userName));
     }
 }

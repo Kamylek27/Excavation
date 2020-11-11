@@ -23,7 +23,7 @@ class MailService {
     void sendMail(NotificationEmail notificationEmail) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
-            messageHelper.setFrom("ExcavationForum@exca.com");
+            messageHelper.setFrom("springexcavation@email.com");
             messageHelper.setTo(notificationEmail.getRecipient());
             messageHelper.setSubject(notificationEmail.getSubject());
             messageHelper.setText(notificationEmail.getBody());
@@ -32,7 +32,8 @@ class MailService {
             mailSender.send(messagePreparator);
             log.info("Activation email sent!!");
         } catch (MailException e) {
-            throw new SpringExcavationException("Exception occurred when sending mail to " + notificationEmail.getRecipient());
+            log.error("Exception occurred when sending mail", e);
+            throw new SpringExcavationException("Exception occurred when sending mail to " + notificationEmail.getRecipient(), e);
         }
     }
 

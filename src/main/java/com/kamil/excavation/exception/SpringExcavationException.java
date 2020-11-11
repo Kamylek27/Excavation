@@ -1,11 +1,15 @@
 package com.kamil.excavation.exception;
 
 import org.hibernate.engine.internal.ImmutableEntityEntry;
+import org.springframework.mail.MailException;
 
 public class SpringExcavationException extends RuntimeException {
 
-    public SpringExcavationException(String message) {
+    public SpringExcavationException(String exMessage, Exception exception) {
+        super(exMessage, exception);
+    }
 
-        super(message);
+    public SpringExcavationException(String exMessage) {
+        super(exMessage);
     }
 }
