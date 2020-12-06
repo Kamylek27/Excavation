@@ -17,7 +17,7 @@ This is the Social Application
 * HTML/CSS/JavaScript
 * Angular
 * MySQL
-* Spring
+* Extensive use of Spring Framework: Spring MVC, Spring Security, Spring Data (Hibernate), Spring Boot
 * MapStruct
 
 
