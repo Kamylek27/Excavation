@@ -1,6 +1,6 @@
 # Excavation
 
-This is the Social Application
+This is the RESTful API Social Application (like Reddit and Wykop.pl)
 
 ## Features
 
@@ -10,15 +10,15 @@ This is the Social Application
 * View/Edit profile
 * Veryfication by email
 * Sending information about posts by e-mail
+* RESTful API architecture
 
 ## Technologies
 
 * Java
-* HTML/CSS/JavaScript
-* Bootstrap 4
+* HTML/CSS/JavaScript(Bootstrap 4)
 * Angular 9
 * MySQL
-* Extensive use of Spring Framework: Spring MVC, Spring Security, Spring Data (Hibernate), Spring Boot
+* Extensive use of Spring Framework, Spring MVC, Spring Security, Spring Data (Hibernate), Spring Boot
 * MapStruct
 
 
