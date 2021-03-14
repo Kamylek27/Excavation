@@ -94,7 +94,7 @@ class AuthControllerTest {
 
 
     @Test
-    public void shouldVeryficationUserByToken() throws Exception {
+    public void shouldVerificationUserByToken() throws Exception {
 
         String token = "2131232131231232";
 
