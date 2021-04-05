@@ -1,6 +1,6 @@
 # Excavation
 
-This is the RESTful API Social Application (like Reddit and Wykop.pl)
+This is the RESTful API Social Application (like Reddit) witch allows to create topics, posts, comments by users.
 
 ## Features
 
